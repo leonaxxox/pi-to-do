@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0;overflow:hidden;cursor:none;background:#ffeef5;color:#5b2a43;font-family:'Nunito',sans-serif}a{color:#ff5fa2}a:hover{color:#ff8fbf}*{box-sizing:border-box}</style>
+</helmet>
+<div style="position:relative;width:100vw;height:100vh;background:#ffeef5;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 250px;font-family:'Nunito',sans-serif;color:#5b2a43">
+          <div style="display:flex;flex-direction:column;min-height:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px 10px">
+              <div style="font-family:'Fredoka',sans-serif;font-size:28px;font-weight:600">today's list ♡</div>
+              <div style="font-family:'Fredoka',sans-serif;font-size:14px;color:#b07a95;background:#ffffff;padding:6px 12px;border-radius:999px;white-space:nowrap">{{ dateStr }} · {{ clockStr }}</div>
+            </div>
+            <div style="flex:1;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:8px;padding:4px 20px 16px">
+              <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="6">
+                <div onClick="{{ t.toggle }}" style="display:flex;gap:12px;align-items:center;padding:0 14px;min-height:54px;border-radius:18px;background:#ffffff;box-shadow:0 2px 0 #f7cadb;cursor:pointer;opacity:{{ t.opacity }}">
+                  <div style="flex:none;width:30px;height:30px;border-radius:50%;border:2px solid {{ t.pinkRing }};background:{{ t.pinkBg }};display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:16px">{{ t.mark }}</div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+                    <div style="font-size:18px;font-weight:700;color:{{ t.color }};text-decoration:{{ t.deco }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.title }}</div>
+                    <div style="font-family:'Fredoka',sans-serif;font-size:12px;color:{{ t.dueColor }}">{{ t.project }} · {{ t.due }}</div>
+                  </div>
+                  <div style="flex:none;font-family:'Fredoka',sans-serif;font-size:12px;font-weight:600;color:#ffffff;background:{{ t.priColor }};border-radius:999px;padding:3px 10px">{{ t.priWord }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 16px 16px 0">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#ffffff;border-radius:22px">
+              <div style="position:relative;width:120px;height:120px">
+                <svg width="120" height="120" viewBox="0 0 132 132" style="transform:rotate(-90deg)"><circle cx="66" cy="66" r="56" fill="none" stroke="#ffe0ec" stroke-width="14"></circle><circle cx="66" cy="66" r="56" fill="none" stroke="#ff5fa2" stroke-width="14" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="{{ ringOffset }}" style="transition:stroke-dashoffset .4s"></circle></svg>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <div style="font-family:'Fredoka',sans-serif;font-size:32px;font-weight:600;line-height:1">{{ doneCount }}<span style="color:#b07a95;font-size:18px">/{{ totalCount }}</span></div>
+                </div>
+              </div>
+              <div style="font-family:'Fredoka',sans-serif;font-size:15px;color:#9a5c7b">{{ cheer }}</div>
+            </div>
+            <div onClick="{{ toggleTimer }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#ffffff;border-radius:22px;cursor:pointer">
+              <div style="font-family:'Fredoka',sans-serif;font-size:14px;color:#b07a95;text-align:center;padding:0 10px;white-space:pre-line;line-height:1.3">{{ focusLabel }}</div>
+              <div style="font-family:'Fredoka',sans-serif;font-size:46px;font-weight:600;color:#ff5fa2;line-height:1">{{ timeStr }}</div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <div style="font-family:'Fredoka',sans-serif;font-size:15px;font-weight:600;padding:8px 18px;border-radius:999px;background:#ff5fa2;color:#ffffff">{{ timerAction }}</div>
+                <div onClick="{{ resetTimer }}" style="font-family:'Fredoka',sans-serif;font-size:15px;font-weight:600;padding:8px 14px;border-radius:999px;background:#ffe0ec;color:#9a5c7b">reset</div>
+              </div>
+            </div>
+          </div>
+        
+          <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;background:#ffeef5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px">
+              <div style="font-family:'Fredoka',sans-serif;font-size:30px;font-weight:600;color:#5b2a43">let's connect your to-do list ♡</div>
+              <div style="font-size:18px;color:#9a5c7b">On your phone, go to <span style="font-weight:800;color:#5b2a43">{{ loginUrl }}</span> and enter this code:</div>
+              <div style="font-family:'Fredoka',sans-serif;font-size:60px;font-weight:600;letter-spacing:.12em;color:#ff5fa2;background:#ffffff;padding:12px 32px;border-radius:24px;box-shadow:0 2px 0 #f7cadb">{{ loginCode }}</div>
+              <div style="font-size:15px;color:#b07a95">Sign in with your Microsoft account. This screen will update by itself.</div>
+            </div>
+          </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;timerName&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;just a girl who's busy rn (leave me alone)&quot;,&quot;options&quot;:[&quot;just a girl who's busy rn (leave me alone)&quot;,&quot;just a girl, focusing ♡&quot;,&quot;just a girl doing her best ✿&quot;,&quot;i'm just a girl (with a deadline)&quot;,&quot;just a girl and her to-do list&quot;,&quot;just a girl, locked in&quot;,&quot;just a girl getting it done ♡&quot;,&quot;just a girl in her work era&quot;,&quot;just a girl who's busy rn&quot;,&quot;just a girl on the clock ✿&quot;,&quot;just a girl, 25 mins, no texts&quot;,&quot;just a girl being productive ♡&quot;,&quot;sorry, i'm just a girl (working)&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;focusMinutes&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:25,&quot;min&quot;:5,&quot;max&quot;:60,&quot;step&quot;:5,&quot;unit&quot;:&quot;min&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;hideCompleted&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tasks: [
+      { id: 1, title: 'Reply to Sam re: Q4 budget', project: 'Finance', due: 'Overdue', pri: 1, done: false },
+      { id: 2, title: 'Prep slides for 2pm review', project: 'Launch', due: '14:00', pri: 1, done: false },
+      { id: 3, title: 'Review PR #482', project: 'Platform', due: 'Today', pri: 2, done: true },
+      { id: 4, title: 'Book train for Thursday', project: 'Admin', due: 'Today', pri: 3, done: false },
+      { id: 5, title: 'Write onboarding doc outline', project: 'Launch', due: 'Today', pri: 2, done: false },
+      { id: 6, title: 'Standup notes', project: 'Team', due: '09:30', pri: 2, done: true },
+      { id: 7, title: 'Expense October receipts', project: 'Admin', due: 'Today', pri: 3, done: false },
+    ],
+    remaining: null, running: false, now: new Date(), skipped: [],
+  };
+  componentDidMount() {
+    this.iv = setInterval(() => {
+      const total = (this.props.focusMinutes ?? 25) * 60;
+      this.setState(s => {
+        const n = { now: new Date() };
+        if (s.running) {
+          const r = (s.remaining ?? total) - 1;
+          if (r <= 0) { n.remaining = null; n.running = false; } else n.remaining = r;
+        }
+        return n;
+      });
+    }, 1000);
+    this.poll = async () => {
+      try {
+        const r = await fetch('/api/state', { cache: 'no-store' });
+        if (!r.ok) return;
+        const s = await r.json();
+        this.setState({ live: true, liveStatus: s.status, login: s.login, ...(s.status === 'ok' ? { tasks: s.tasks } : {}) });
+      } catch (e) {}
+    };
+    this.poll();
+    this.pv = setInterval(this.poll, 15000);
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearInterval(this.pv); }
+  toggle(id) {
+    const t = this.state.tasks.find(x => x.id === id);
+    if (!t) return;
+    this.setState(s => ({ tasks: s.tasks.map(x => x.id === id ? { ...x, done: !x.done } : x) }));
+    if (this.state.live) fetch('/api/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, listId: t.listId, done: !t.done }) }).then(() => setTimeout(this.poll, 3000)).catch(() => {});
+  }
+  renderVals() {
+    const { tasks, running, now, skipped } = this.state;
+    const hide = this.props.hideCompleted ?? false;
+    const total = (this.props.focusMinutes ?? 25) * 60;
+    const rem = this.state.remaining ?? total;
+    const priColors = { 1: '#e63980', 2: '#ff5fa2', 3: '#8fb0ee' };
+    const decorate = t => ({
+      ...t,
+      toggle: () => this.toggle(t.id),
+      ring: t.done ? '#b98ce8' : '#f0a3c0',
+      checkBg: t.done ? '#b98ce8' : 'transparent',
+      mark: t.done ? '♥' : '',
+      color: t.done ? '#d4a3b9' : '#5b2a43',
+      deco: t.done ? 'line-through' : 'none',
+      opacity: t.done ? 0.6 : 1,
+      priColor: priColors[t.pri],
+      priWord: ['', 'urgent', 'today', 'whenever'][t.pri],
+      pinkRing: t.done ? '#ff5fa2' : '#f7b6cf', pinkBg: t.done ? '#ff5fa2' : '#ffffff',
+      flower: t.done ? '✿' : '', lilacRing: t.done ? '#a160e8' : '#d3bdf5', lilacBg: t.done ? '#a160e8' : '#ffffff', lilacText: t.done ? '#bfaed6' : '#4a2d5e',
+      priHearts: '♥'.repeat(4 - t.pri),
+      star: t.done ? '★' : '', cherryBg: t.done ? '#e63980' : '#ffffff', cherryText: t.done ? '#d9a9bd' : '#4b1630',
+      cherryChip: ['', '#ff8fbf', '#ffd0e3', '#ffeaf2'][t.pri],
+      dueColor: t.done ? '#d4a3b9' : t.due === 'Overdue' ? '#e63980' : '#b07a95',
+    });
+    const sorted = [...tasks].sort((a, b) => (a.done - b.done) || (a.pri - b.pri)).filter(t => !(hide && t.done)).map(decorate);
+    const open = sorted.filter(t => !t.done).sort((a, b) => skipped.indexOf(a.id) - skipped.indexOf(b.id));
+    const doneCount = tasks.filter(t => t.done).length;
+    const pct = tasks.length ? doneCount / tasks.length : 0;
+    const mm = String(Math.floor(rem / 60)).padStart(2, '0'), ss = String(rem % 60).padStart(2, '0');
+    const paused = !running && rem < total;
+    return {
+      tasks: sorted,
+      columns: [1, 2, 3].map(p => {
+        const items = sorted.filter(t => t.pri === p);
+        return { label: ['', 'P1 · URGENT', 'P2 · TODAY', 'P3 · WHENEVER'][p], color: priColors[p], items, count: items.filter(t => !t.done).length + ' open' };
+      }),
+      current: open[0] || {}, hasCurrent: !!open[0], allDone: !open[0], upNext: open.slice(1, 4),
+      skipCurrent: () => open[0] && this.setState(s => ({ skipped: [...s.skipped.filter(i => i !== open[0].id), open[0].id] })),
+      focusLabel: (this.props.timerName ?? 'just a girl who\'s busy rn (leave me alone)').replace(' (', '\n('),
+      doneCount, totalCount: tasks.length,
+      showLogin: this.state.liveStatus === 'login' && !!this.state.login,
+      loginCode: this.state.login ? this.state.login.code : '',
+      loginUrl: this.state.login ? this.state.login.url.replace(/^https?:\/\//, '') : '',
+      hearts: tasks.map((t, i) => ({ c: i < doneCount ? '#ff5fa2' : '#e6d9fb' })),
+      cheer: pct >= 1 ? 'all done, queen ♡' : pct >= 0.5 ? 'the girls that get it, get it ♡' : doneCount ? 'pop off queen, you\'re killing it ♡' : 'you got this ♡',
+      lilacTimerBg: running ? '#f0e4ff' : 'transparent',
+      progressPct: Math.round(pct * 100) + '%',
+      ringOffset: 351.86 * (1 - pct),
+      timeStr: mm + ':' + ss,
+      timerAction: running ? 'Pause' : paused ? 'Resume' : 'Start',
+      timerColor: running ? '#ff5fa2' : '#5b2a43',
+      timerBg: running ? '#ffd6e7' : 'transparent',
+      timerChipBg: running ? '#ff5fa2' : '#fbdbe7',
+      timerChipColor: running ? '#ffffff' : '#5b2a43',
+      toggleTimer: () => this.setState(s => ({ running: !s.running })),
+      resetTimer: e => { e && e.stopPropagation(); this.setState({ running: false, remaining: null }); },
+      clockStr: now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+      dateStr: now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "client_id": "PASTE-YOUR-APPLICATION-CLIENT-ID-HERE",
+  "lists": [],
+  "only_due_today": false,
+  "refresh_seconds": 60
+}
